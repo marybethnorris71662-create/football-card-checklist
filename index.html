@@ -65,7 +65,7 @@
       li:first-child label { border-top: 0; }
       li.have label { background: var(--have); }
       input[type=checkbox] { width: 1.25rem; height: 1.25rem; flex: none; accent-color: var(--turf); }
-      body:not(.logged-in) input[type=checkbox] {
+      body:not(.logged-in) input[type="checkbox"] {
   display: none;
 }
 
@@ -337,8 +337,11 @@ body:not(.logged-in) li label {
         }
         say("Loading your list…");
         try {
-          const snap = await getDoc(doc(db, "users", u.uid));
-          user = u;
+          
+const snap = await getDoc(doc(db, "users", u.uid));
+user = u;
+window.cardApp.setLoggedIn(true);
+
           if (snap.exists()) {
             window.cardApp.useCloud(snap.data().ids || []);
             say("Saved to your account");
