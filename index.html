@@ -464,19 +464,6 @@ document.getElementById("passwordResetBtn").addEventListener("click", async func
   }
 });
       function say(text, bad) { status.textContent = text; status.className = bad ? "bad" : ""; }
-
-      btn.addEventListener("click", async function () {
-        if (user) { await signOut(auth); return; }
-        const provider = new GoogleAuthProvider();
-        try { await signInWithPopup(auth, provider); }
-        catch (e) {
-          if (e.code === "auth/popup-blocked") { signInWithRedirect(auth, provider); }
-          else if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
-            say("Sign-in failed (" + (e.code || "error") + ")", true);
-          }
-        }
-      });
-
       async function push() {
         const me = user; if (!me) return;
         try {
