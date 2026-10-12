@@ -508,11 +508,12 @@ document.getElementById("closeSignInModal").addEventListener("click", function (
 signInModal.addEventListener("click", function (event) {
   if (event.target === signInModal) signInModal.hidden = true;
 });
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({
+  prompt: "select_account"
+});
 
-document.getElementById("googleSignInBtn").addEventListener("click", async function () {
-  const provider = new GoogleAuthProvider();
-
-  try {
+try {
     await signInWithPopup(auth, provider);
     signInModal.hidden = true;
   } catch (e) {
