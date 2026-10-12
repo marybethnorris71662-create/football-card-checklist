@@ -349,6 +349,7 @@ window.cardApp.setLoggedIn(true);
             window.cardApp.useCloud(window.cardApp.getGuestIds());
             await push();
           }
+          window.cardApp.setLoggedIn(true);
           nameEl.textContent = u.displayName || u.email || "";
           if (u.photoURL) { avatar.src = u.photoURL; avatar.hidden = false; }
           btn.textContent = "Sign out";
