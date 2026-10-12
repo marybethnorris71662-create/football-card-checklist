@@ -85,11 +85,51 @@ body:not(.logged-in) li label {
   <body>
     <header class="top"><div class="wrap">
       <div class="toprow">
-        <h1>2026 Topps Football</h1>
-        <div class="auth">
-          <div class="me"><img id="avatar" class="avatar" alt="" hidden referrerpolicy="no-referrer" /><span id="userName"></span></div>
-          <button id="authBtn" type="button">Sign in with Google</button>
-          
+        <h1>2026 Topps Flagship Football Checklist</h1>
+       ```html
+<div class="auth">
+  <div class="me">
+    <img id="avatar" class="avatar" alt="" hidden referrerpolicy="no-referrer" />
+    <span id="userName"></span>
+  </div>
+
+  <button id="authBtn" type="button">Sign In</button>
+  <span id="status" role="status"></span>
+</div>
+
+<!-- Sign-in popup -->
+<div id="signInModal" class="signin-modal" hidden>
+  <div class="signin-box" role="dialog" aria-modal="true" aria-labelledby="signInTitle">
+    <button id="closeSignInModal" class="signin-close" type="button" aria-label="Close">×</button>
+
+    <h2 id="signInTitle">Welcome Back!</h2>
+    <p id="signInSubtitle">Sign in to save and sync your checklist.</p>
+
+    <div id="signInChoices">
+      <button id="googleSignInBtn" type="button">Continue with Google</button>
+      <button id="emailSignInChoice" type="button">Sign In with Email</button>
+      <button id="createAccountChoice" type="button">Create an Account</button>
+    </div>
+
+    <form id="emailAuthForm" hidden>
+      <h3 id="emailFormTitle">Sign In with Email</h3>
+
+      <input id="emailInput" type="email" placeholder="Email address"
+        autocomplete="email" required />
+
+      <input id="passwordInput" type="password"
+        placeholder="Password (at least 6 characters)"
+        autocomplete="current-password" minlength="6" required />
+
+      <button id="emailSubmitBtn" type="submit">Sign In</button>
+      <button id="passwordResetBtn" type="button">Forgot Password?</button>
+      <button id="backToSignInChoices" type="button">Back</button>
+    </form>
+
+    <p id="signInMessage" role="status"></p>
+  </div>
+</div>
+```
 <button id="emailToggleBtn" type="button">
   Use email / password
 </button>
