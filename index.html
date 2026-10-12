@@ -80,6 +80,127 @@ body:not(.logged-in) li label {
       .tag { flex: none; font-size: .75rem; background: #fff3d6; color: #7a5200; border-radius: 999px; padding: .1rem .5rem; }
       .empty { text-align: center; color: var(--muted); padding: 2rem 0; }
       @media (max-width: 480px) { h1 { font-size: 1.6rem; } .tag { display: none; } }
+      /* Sign-in modal overlay */
+.signin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(10, 24, 15, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+/* Respect the hidden attribute */
+.signin-modal[hidden],
+.signin-box[hidden],
+#signInChoices[hidden],
+#emailAuthForm[hidden] {
+  display: none !important;
+}
+
+/* Popup card */
+.signin-box {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  background: #fff;
+  color: #1b2320;
+  border: 1px solid #d6dcd7;
+  border-radius: 16px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.signin-box h2 {
+  margin: 0 0 0.5rem;
+  color: #1d4d2b;
+  font-family: var(--display);
+  font-size: 1.9rem;
+}
+
+.signin-box p {
+  color: #5b6a61;
+  margin: 0 0 1.5rem;
+}
+
+.signin-close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  border: 0;
+  background: transparent;
+  color: #5b6a61;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+#signInChoices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#signInChoices button,
+#emailAuthForm button {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.7rem 1rem;
+  border: 1px solid #d6dcd7;
+  border-radius: 9px;
+  background: #fff;
+  color: #1b2320;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#signInChoices button:first-child,
+#emailSubmitBtn {
+  background: #1d4d2b;
+  color: #fff;
+  border-color: #1d4d2b;
+}
+
+#signInChoices button:hover,
+#emailAuthForm button:hover {
+  filter: brightness(0.95);
+}
+
+#emailAuthForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#emailAuthForm h3 {
+  margin: 0 0 0.5rem;
+}
+
+#emailAuthForm input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.7rem;
+  border: 1px solid #d6dcd7;
+  border-radius: 8px;
+  font: inherit;
+}
+
+#signInMessage {
+  margin: 1rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+  .signin-box {
+    padding: 1.5rem;
+  }
+}
     </style>
   </head>
   <body>
