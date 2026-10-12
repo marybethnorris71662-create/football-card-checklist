@@ -89,6 +89,41 @@ body:not(.logged-in) li label {
         <div class="auth">
           <div class="me"><img id="avatar" class="avatar" alt="" hidden referrerpolicy="no-referrer" /><span id="userName"></span></div>
           <button id="authBtn" type="button">Sign in with Google</button>
+          
+<button id="emailToggleBtn" type="button">
+  Use email / password
+</button>
+
+<form id="emailAuthForm" hidden>
+  <input
+    id="emailInput"
+    type="email"
+    placeholder="Email address"
+    autocomplete="email"
+    required
+  />
+
+  <input
+    id="passwordInput"
+    type="password"
+    placeholder="Password (at least 6 characters)"
+    autocomplete="new-password"
+    minlength="6"
+    required
+  />
+
+  <button id="emailCreateBtn" type="button">
+    Create Account
+  </button>
+
+  <button id="emailSignInBtn" type="button">
+    Sign In with Email
+  </button>
+
+  <button id="passwordResetBtn" type="button">
+    Forgot Password?
+  </button>
+</form>
           <span id="status" role="status"></span>
         </div>
       </div>
@@ -112,6 +147,49 @@ body:not(.logged-in) li label {
       <div id="checklist"></div>
       <p class="empty" id="empty" hidden>No cards match. Try a different search or filter.</p>
     </div></main>
+
+#emailToggleBtn,
+#emailAuthForm button {
+  border: 0;
+  border-radius: 8px;
+  padding: .5rem .7rem;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#emailToggleBtn {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.65);
+}
+
+#emailAuthForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+#emailAuthForm[hidden] {
+  display: none;
+}
+
+#emailAuthForm input {
+  width: 100%;
+  min-width: 0;
+  padding: .55rem;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font: inherit;
+}
+
+#emailAuthForm button {
+  background: #fff;
+  color: var(--turf-deep);
+}
+
+    
 
     <script>
       // Each card: [id, number/code, player(s), team(s), note]
@@ -278,8 +356,18 @@ body:not(.logged-in) li label {
     </script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-      import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut }
-        from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+      
+import {
+  getAuth,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  signOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
       import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -297,7 +385,62 @@ body:not(.logged-in) li label {
       const btn = document.getElementById("authBtn"), status = document.getElementById("status");
       const nameEl = document.getElementById("userName"), avatar = document.getElementById("avatar");
       let user = null, timer = null, errMsg = "";
+      
+const emailForm = document.getElementById("emailAuthForm");
+const emailToggleBtn = document.getElementById("emailToggleBtn");
+const emailInput = document.getElementById("emailInput");
+const passwordInput = document.getElementById("passwordInput");
 
+emailToggleBtn.addEventListener("click", function () {
+  emailForm.hidden = !emailForm.hidden;
+});
+
+document.getElementById("emailCreateBtn").addEventListener("click", async function () {
+  if (!emailForm.reportValidity()) return;
+
+  try {
+    say("Creating your account…");
+    await createUserWithEmailAndPassword(
+      auth,
+      emailInput.value.trim(),
+      passwordInput.value
+    );
+  } catch (e) {
+    say("Account creation failed (" + (e.code || "error") + ")", true);
+  }
+});
+
+document.getElementById("emailSignInBtn").addEventListener("click", async function () {
+  if (!emailForm.reportValidity()) return;
+
+  try {
+    say("Signing in…");
+    await signInWithEmailAndPassword(
+      auth,
+      emailInput.value.trim(),
+      passwordInput.value
+    );
+  } catch (e) {
+    say("Email sign-in failed (" + (e.code || "error") + ")", true);
+  }
+});
+
+document.getElementById("passwordResetBtn").addEventListener("click", async function () {
+  const email = emailInput.value.trim();
+
+  if (!email) {
+    say("Enter your email address first.", true);
+    emailInput.focus();
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    say("If an account exists for that email, a reset email has been sent.");
+  } catch (e) {
+    say("Password reset failed (" + (e.code || "error") + ")", true);
+  }
+});
       function say(text, bad) { status.textContent = text; status.className = bad ? "bad" : ""; }
 
       btn.addEventListener("click", async function () {
