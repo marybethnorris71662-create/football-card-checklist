@@ -508,22 +508,29 @@ document.getElementById("closeSignInModal").addEventListener("click", function (
 signInModal.addEventListener("click", function (event) {
   if (event.target === signInModal) signInModal.hidden = true;
 });
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({
-  prompt: "select_account"
-});
+document.getElementById("googleSignInBtn").addEventListener("click", async function () {
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({
+    prompt: "select_account"
+  });
 
-try {
+  try {
     await signInWithPopup(auth, provider);
     signInModal.hidden = true;
   } catch (e) {
     if (e.code === "auth/popup-blocked") {
-      await signInWithRedirect(auth, provider);
+      try {
+        await signInWithRedirect(auth, provider);
+      } catch (redirectError) {
+        signInMessage.textContent =
+          "Google sign-in failed (" + (redirectError.code || "error") + ").";
+      }
     } else if (
       e.code !== "auth/popup-closed-by-user" &&
       e.code !== "auth/cancelled-popup-request"
     ) {
-      signInMessage.textContent = "Google sign-in failed (" + (e.code || "error") + ").";
+      signInMessage.textContent =
+        "Google sign-in failed (" + (e.code || "error") + ").";
     }
   }
 });
