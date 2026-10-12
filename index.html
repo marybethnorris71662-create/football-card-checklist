@@ -8,9 +8,19 @@
   <body>
     <h1>My Football Cards</h1>
     <ul>
-      <li><label><input type="checkbox" /> #1 Patrick Mahomes</label></li>
-      <li><label><input type="checkbox" /> #2 Josh Allen</label></li>
-      <li><label><input type="checkbox" /> #3 Justin Jefferson</label></li>
+      <li><label><input type="checkbox" id="card1" /> #1 Patrick Mahomes</label></li>
+      <li><label><input type="checkbox" id="card2" /> #2 Josh Allen</label></li>
+      <li><label><input type="checkbox" id="card3" /> #3 Justin Jefferson</label></li>
     </ul>
+
+    <script>
+      // For each checkbox, restore its saved state and save it when clicked
+      document.querySelectorAll("input[type=checkbox]").forEach(function (box) {
+        box.checked = localStorage.getItem(box.id) === "yes";
+        box.addEventListener("change", function () {
+          localStorage.setItem(box.id, box.checked ? "yes" : "no");
+        });
+      });
+    </script>
   </body>
 </html>
