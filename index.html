@@ -336,42 +336,112 @@ import {
       const nameEl = document.getElementById("userName"), avatar = document.getElementById("avatar");
       let user = null, timer = null, errMsg = "";
       
+```js
+const signInModal = document.getElementById("signInModal");
+const signInChoices = document.getElementById("signInChoices");
 const emailForm = document.getElementById("emailAuthForm");
-const emailToggleBtn = document.getElementById("emailToggleBtn");
 const emailInput = document.getElementById("emailInput");
 const passwordInput = document.getElementById("passwordInput");
+const emailFormTitle = document.getElementById("emailFormTitle");
+const emailSubmitBtn = document.getElementById("emailSubmitBtn");
+const signInMessage = document.getElementById("signInMessage");
 
-emailToggleBtn.addEventListener("click", function () {
-  emailForm.hidden = !emailForm.hidden;
+let emailMode = "signin";
+
+function showSignInChoices() {
+  signInChoices.hidden = false;
+  emailForm.hidden = true;
+  signInMessage.textContent = "";
+}
+
+function openEmailForm(mode) {
+  emailMode = mode;
+  signInChoices.hidden = true;
+  emailForm.hidden = false;
+  signInMessage.textContent = "";
+
+  if (mode === "create") {
+    emailFormTitle.textContent = "Create an Account";
+    emailSubmitBtn.textContent = "Create Account";
+    passwordInput.autocomplete = "new-password";
+  } else {
+    emailFormTitle.textContent = "Sign In with Email";
+    emailSubmitBtn.textContent = "Sign In";
+    passwordInput.autocomplete = "current-password";
+  }
+}
+
+btn.addEventListener("click", async function () {
+  if (user) {
+    await signOut(auth);
+    return;
+  }
+
+  signInModal.hidden = false;
+  showSignInChoices();
 });
 
-document.getElementById("emailCreateBtn").addEventListener("click", async function () {
-  if (!emailForm.reportValidity()) return;
+document.getElementById("closeSignInModal").addEventListener("click", function () {
+  signInModal.hidden = true;
+});
+
+signInModal.addEventListener("click", function (event) {
+  if (event.target === signInModal) signInModal.hidden = true;
+});
+
+document.getElementById("googleSignInBtn").addEventListener("click", async function () {
+  const provider = new GoogleAuthProvider();
 
   try {
-    say("Creating your account…");
-    await createUserWithEmailAndPassword(
-      auth,
-      emailInput.value.trim(),
-      passwordInput.value
-    );
+    await signInWithPopup(auth, provider);
+    signInModal.hidden = true;
   } catch (e) {
-    say("Account creation failed (" + (e.code || "error") + ")", true);
+    if (e.code === "auth/popup-blocked") {
+      await signInWithRedirect(auth, provider);
+    } else if (
+      e.code !== "auth/popup-closed-by-user" &&
+      e.code !== "auth/cancelled-popup-request"
+    ) {
+      signInMessage.textContent = "Google sign-in failed (" + (e.code || "error") + ").";
+    }
   }
 });
 
-document.getElementById("emailSignInBtn").addEventListener("click", async function () {
+document.getElementById("emailSignInChoice").addEventListener("click", function () {
+  openEmailForm("signin");
+});
+
+document.getElementById("createAccountChoice").addEventListener("click", function () {
+  openEmailForm("create");
+});
+
+document.getElementById("backToSignInChoices").addEventListener("click", showSignInChoices);
+
+emailForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
   if (!emailForm.reportValidity()) return;
 
   try {
-    say("Signing in…");
-    await signInWithEmailAndPassword(
-      auth,
-      emailInput.value.trim(),
-      passwordInput.value
-    );
+    signInMessage.textContent = emailMode === "create"
+      ? "Creating your account…"
+      : "Signing in…";
+
+    if (emailMode === "create") {
+      await createUserWithEmailAndPassword(
+        auth, emailInput.value.trim(), passwordInput.value
+      );
+    } else {
+      await signInWithEmailAndPassword(
+        auth, emailInput.value.trim(), passwordInput.value
+      );
+    }
+
+    signInModal.hidden = true;
+    emailForm.reset();
   } catch (e) {
-    say("Email sign-in failed (" + (e.code || "error") + ")", true);
+    signInMessage.textContent =
+      (emailMode === "create" ? "Account creation" : "Email sign-in") +
+      " failed (" + (e.code || "error") + ").";
   }
 });
 
@@ -379,16 +449,18 @@ document.getElementById("passwordResetBtn").addEventListener("click", async func
   const email = emailInput.value.trim();
 
   if (!email) {
-    say("Enter your email address first.", true);
+    signInMessage.textContent = "Enter your email address first.";
     emailInput.focus();
     return;
   }
 
   try {
     await sendPasswordResetEmail(auth, email);
-    say("If an account exists for that email, a reset email has been sent.");
+    signInMessage.textContent =
+      "If an account exists for that email, a reset email has been sent.";
   } catch (e) {
-    say("Password reset failed (" + (e.code || "error") + ")", true);
+    signInMessage.textContent =
+      "Password reset failed (" + (e.code || "error") + ").";
   }
 });
       function say(text, bad) { status.textContent = text; status.className = bad ? "bad" : ""; }
@@ -424,7 +496,7 @@ document.getElementById("passwordResetBtn").addEventListener("click", async func
   window.cardApp.setLoggedIn(false);
   window.cardApp.useGuest();                                  // signed out (or never signed in): this browser's own list
           
-          nameEl.textContent = ""; avatar.hidden = true; btn.textContent = "Sign in with Google";
+          nameEl.textContent = ""; avatar.hidden = true; btn.textContent = "Sign In";
           say(errMsg || "Sign in to keep your list on every device", !!errMsg); errMsg = "";
           return;
         }
