@@ -212,6 +212,9 @@ body:not(.logged-in) li label {
 body:not(.logged-in) #progressSection {
   display: none !important;
 }
+body.logged-in #progressSection {
+  display: block !important;
+}   
     </style>
   </head>
   <body>
@@ -223,8 +226,9 @@ body:not(.logged-in) #progressSection {
     <img id="avatar" class="avatar" alt="" hidden referrerpolicy="no-referrer" />
     <span id="userName"></span>
   </div>
-  <button id="authBtn" type="button">Sign In</button>
+    <button id="authBtn" type="button">Sign In</button>
   <span id="status" role="status"></span>
+</div>
 </div>
 
 <!-- Sign-in popup -->
