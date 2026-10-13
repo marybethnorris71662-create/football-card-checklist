@@ -49,6 +49,9 @@
       .tabs button { flex: none; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: .4rem .85rem; font-size: .9rem; cursor: pointer; color: var(--ink); }
       .tabs button[aria-pressed="true"] { background: var(--turf-deep); color: #fff; border-color: var(--turf-deep); }
       .tabs small { opacity: .7; margin-left: .3rem; }
+      .tabrow { display: flex; gap: .5rem; align-items: flex-start; }
+      .tabrow .tabs { flex: 1; min-width: 0; }
+      #collapseAll { flex: none; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: .4rem .85rem; font-size: .9rem; cursor: pointer; color: var(--ink); }
 
       main { padding: 1rem; }
       details { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin-bottom: .6rem; overflow: hidden; }
@@ -276,7 +279,10 @@ body.logged-in #progressSection {
           <button data-f="have" aria-pressed="false">Have</button>
         </div>
       </div>
-      <div class="tabs" id="tabs"></div>
+      <div class="tabrow">
+        <div class="tabs" id="tabs"></div>
+        <button id="collapseAll" type="button">Collapse all</button>
+      </div>
     </div></div>
 
     <main><div class="wrap">
@@ -426,6 +432,9 @@ body.logged-in #progressSection {
         });
         $("empty").hidden = shown > 0;
       }
+      $("collapseAll").addEventListener("click", function () {
+        document.querySelectorAll("details[open]").forEach(function (d) { d.open = false; });
+      });
       function guestIds() {
         try { return Object.keys(JSON.parse(localStorage.getItem(STORE_KEY)) || {}); } catch (e) { return []; }
       }
